@@ -1,0 +1,19 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: ms-gateway
+
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: service
+            uri: lb://ms-service
+            predicates:
+              - Path=/api/v1/service/**
+
+          - id: user
+            uri: lb://ms-user
+            predicates:
+              - Path=/api/v1/user/**
