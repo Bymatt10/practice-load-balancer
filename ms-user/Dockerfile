@@ -1,10 +1,4 @@
 FROM openjdk:21
-
-WORKDIR /app
-
-COPY target/ms-user-0.0.1-SNAPSHOT.jar /app/ms-user.jar
-
-
+COPY target/*.jar app.jar
 EXPOSE 8082
-
-ENTRYPOINT ["java", "-jar", "/app/ms-user.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

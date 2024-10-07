@@ -1,0 +1,34 @@
+version: '2'
+services:
+  load-balancer:
+    container_name: load-balancer
+    build:
+      context: ./ms-gateway
+      dockerfile: Dockerfile
+    image: docker-load-balancer-img
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ms-service
+      - ms-user
+    network_mode: host
+
+  ms-service:
+    container_name: ms-service
+    build:
+      context: ./ms-service
+      dockerfile: Dockerfile
+    image: docker-ms-service-img
+    ports:
+      - "8081:8081"
+    network_mode: host
+
+  ms-user:
+    container_name: ms-user
+    build:
+      context: ./ms-user
+      dockerfile: Dockerfile
+    image: docker-ms-user-img
+    ports:
+      - "8082:8082"
+    network_mode: host
