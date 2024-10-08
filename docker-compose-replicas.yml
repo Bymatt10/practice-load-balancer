@@ -1,0 +1,45 @@
+version: '3'
+services:
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./ms-gateway
+      dockerfile: Dockerfile
+    image: docker-api-gateway-img
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://localhost:8671/eureka/
+      - EUREKA_INSTANCE_HOSTNAME=api-gateway
+      - EUREKA_SERVER_WAIT_TIME_IN_MS=5000
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 5s
+      timeout: 10s
+      retries: 2
+
+  ms-service:
+    build:
+      context: ./ms-service
+      dockerfile: Dockerfile
+    image: docker-ms-service-img
+    deploy:
+      replicas: 3
+    depends_on:
+      - api-gateway
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://api-gateway:8761/eureka/
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 5s
+      timeout: 10s
+      retries: 2
+
+networks:
+  app-network:
+    driver: bridge
